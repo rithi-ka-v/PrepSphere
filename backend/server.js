@@ -9,6 +9,8 @@ const pool = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const resumeRoutes = require("./routes/resumeRoutes");
 const atsRoutes = require("./routes/atsRoutes");
+const interviewRoutes = require("./routes/interviewRoutes");
+const skillRoutes = require("./routes/skillRoutes");
 
 const app = express();
 
@@ -20,6 +22,8 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/ats", atsRoutes);
+app.use("/api/interview", interviewRoutes);
+app.use("/api/skills", skillRoutes);
 
 pool.connect()
   .then(() =>

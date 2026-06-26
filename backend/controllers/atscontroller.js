@@ -31,28 +31,42 @@ const analyzeResume = async (req, res) => {
     const text = pdfData.text.toLowerCase();
 
     // Skills list
-    const skills = [
-      "react",
-      "node",
-      "express",
-      "mongodb",
-      "postgresql",
-      "javascript",
-      "java",
-      "python",
-      "git",
-      "github",
-    ];
+   // Skills list
+const skills = [
+  "react",
+  "node",
+  "express",
+  "mongodb",
+  "postgresql",
+  "javascript",
+  "java",
+  "python",
+  "git",
+  "github",
+  "docker",
+  "aws",
+  "redis",
+  "jwt",
+  "rest api",
+  "typescript",
+  "redux",
+  "spring boot",
+  "hibernate",
+  "mysql"
+];
 
-    let score = 0;
-    let foundSkills = [];
+let score = 0;
+let foundSkills = [];
 
-    skills.forEach((skill) => {
-      if (text.includes(skill)) {
-        score += 10;
-        foundSkills.push(skill);
-      }
-    });
+skills.forEach((skill) => {
+  if (text.includes(skill.toLowerCase())) {
+    score += 5;
+    foundSkills.push(skill);
+  }
+});
+
+// Prevent score from exceeding 100
+score = Math.min(score, 100);
 
     let feedback = "";
 
@@ -64,12 +78,19 @@ const analyzeResume = async (req, res) => {
       feedback = "Needs Improvement";
     }
 
-    await pool.query(
-      `UPDATE resumes
-       SET ats_score=$1, feedback=$2
-       WHERE id=$3`,
-      [score, feedback, resumeId]
-    );
+   await pool.query(
+  `UPDATE resumes
+   SET ats_score=$1,
+       feedback=$2,
+       extracted_skills=$3
+   WHERE id=$4`,
+  [
+    score,
+    feedback,
+    JSON.stringify(foundSkills),
+    resumeId
+  ]
+);
 
     res.json({
       atsScore: score,

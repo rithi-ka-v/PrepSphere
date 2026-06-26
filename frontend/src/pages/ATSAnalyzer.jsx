@@ -1,32 +1,42 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import API from "../services/api";
 
 function ATSAnalyzer() {
-  const [resumeId, setResumeId] = useState("");
+
+  const location = useLocation();
+
+  const [resumeId, setResumeId] = useState(
+    location.state?.resumeId || ""
+  );
+
   const [result, setResult] = useState(null);
 
   const handleAnalyze = async () => {
+
     try {
+
       const response = await API.post(
         "/ats/analyze",
         {
-          resumeId,
+          resumeId
         }
       );
 
       setResult(response.data);
 
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
 
-      alert(
-        error.response?.data?.message ||
-        "Analysis Failed"
-      );
+      console.log(err);
+
+      alert("Analysis Failed");
+
     }
+
   };
 
   return (
+
     <div className="container mt-5">
 
       <div className="card p-4 shadow">
@@ -36,11 +46,11 @@ function ATSAnalyzer() {
         <input
           type="number"
           className="form-control mt-3"
-          placeholder="Enter Resume ID"
           value={resumeId}
           onChange={(e) =>
             setResumeId(e.target.value)
           }
+          placeholder="Resume ID"
         />
 
         <button
@@ -51,38 +61,41 @@ function ATSAnalyzer() {
         </button>
 
         {result && (
+
           <div className="mt-4">
 
             <h3>
-              ATS Score:
-              {result.atsScore}/100
+              ATS Score: {result.atsScore}/100
             </h3>
 
-            <p>
-              {result.feedback}
-            </p>
+            <h5>{result.feedback}</h5>
 
-            <h5>
-              Skills Found
-            </h5>
+            <hr />
+
+            <h4>Skills Found</h4>
 
             <ul>
-              {result.foundSkills.map(
-                (skill, index) => (
-                  <li key={index}>
-                    {skill}
-                  </li>
-                )
-              )}
+
+              {result.foundSkills.map((skill, index) => (
+
+                <li key={index}>
+                  {skill}
+                </li>
+
+              ))}
+
             </ul>
 
           </div>
+
         )}
 
       </div>
 
     </div>
+
   );
+
 }
 
 export default ATSAnalyzer;
